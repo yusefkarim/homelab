@@ -1,0 +1,37 @@
+[Unit]
+Description=Pocket ID Quadlet
+
+[Container]
+Image=ghcr.io/pocket-id/pocket-id:v0.45.0
+AutoUpdate=registry
+ContainerName=pocket-id
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=PUBLIC_APP_URL=https://id.absurdum.ca
+Environment=PUID=%U
+Environment=PGID=%G
+Environment=CADDY_DISABLED=true
+Environment=TRUST_PROXY=true
+
+Label="traefik.enable=true"
+Label="traefik.http.routers.pocket-id.rule=Host(`id.absurdum.ca`)"
+Label="traefik.http.routers.pocket-id.service=pocket-id"
+Label="traefik.http.services.pocket-id.loadbalancer.server.port=3000"
+Label="traefik.http.routers.pocket-id-backend.rule=Host(`id.absurdum.ca`) && (PathPrefix(`/api/`) || PathPrefix(`/.well-known/`))"
+Label="traefik.http.routers.pocket-id-backend.service=pocket-id-backend"
+Label="traefik.http.services.pocket-id-backend.loadbalancer.server.port=8080"
+
+Volume=/media/raid-ssd-01/containers/pocket-id/data:/app/backend/data:Z
+
+Network=reverse-proxy.network
+Notify=true
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/pocket-id/data
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

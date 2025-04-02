@@ -1,0 +1,25 @@
+[Unit]
+Description=OAuth2 Proxy Redis Quadlet
+
+[Container]
+Image=docker.io/redis:7-alpine
+AutoUpdate=registry
+ContainerName=oauth2-proxy-redis
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+HealthCmd=redis-cli ping || exit 1
+
+Volume=/media/raid-ssd-01/containers/oauth2-proxy/cache:/data:Z
+
+Pod=oauth2-proxy.pod
+Notify=healthy
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/oauth2-proxy/cache
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

@@ -1,0 +1,54 @@
+[Unit]
+Description=Forgejo Quadlet
+After=postgres.service
+
+[Container]
+Image=codeberg.org/forgejo/forgejo:10-rootless
+AutoUpdate=registry
+ContainerName=forgejo
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=USER_UID=%U
+Environment=USER_GID=%G
+Environment=FORGEJO__database__DB_TYPE=postgres
+Environment=FORGEJO__database__HOST=postgres:5432
+Environment=FORGEJO__database__NAME=forgejo
+Environment=FORGEJO__database__USER=forgejo
+Secret=postgres-forgejo-password,type=env,target=FORGEJO__database__PASSWD
+Environment=FORGEJO__server__PROTOCOL=http
+Environment=FORGEJO__server__ROOT_URL=https://git.absurdum.ca
+Environment=FORGEJO__server__HTTP_PORT=3000
+Environment=FORGEJO__server__SSH_PORT=2222
+Environment=FORGEJO__server__SSH_CREATE_AUTHORIZED_KEYS_FILE=false
+Environment=FORGEJO__service__DISABLE_REGISTRATION=true
+
+Label="traefik.enable=true"
+Label="traefik.http.routers.git.rule=Host(`git.absurdum.ca`)"
+Label="traefik.http.services.git.loadbalancer.server.port=3000"
+
+Volume=/media/raid-ssd-01/containers/forgejo/data:/etc/gitea:Z
+Volume=/media/raid-ssd-01/containers/forgejo/config:/var/lib/gitea:Z
+Volume=/etc/timezone:/etc/timezone:ro
+Volume=/etc/localtime:/etc/localtime:ro
+
+Network=main.network
+PublishPort=2222:2222
+
+HealthCmd=[[ "$(curl --silent --insecure --output /dev/null --write-out \
+          "%{http_code}" http://127.0.0.1:3000/api/healthz)" == '200' ]]
+HealthInterval=15s
+HealthTimeout=1s
+HealthRetries=3
+HealthOnFailure=kill
+Notify=healthy
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/forgejo/data
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/forgejo/config
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

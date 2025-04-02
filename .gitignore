@@ -1,0 +1,7 @@
+/*
+
+!.gitignore
+.config/*
+!.config/
+!.config/containers
+!.config/systemd

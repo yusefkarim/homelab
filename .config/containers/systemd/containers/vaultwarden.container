@@ -1,0 +1,29 @@
+[Unit]
+Description=Vaultwarden Quadlet
+
+[Container]
+Image=docker.io/vaultwarden/server:latest
+AutoUpdate=registry
+ContainerName=vaultwarden
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=DOMAIN=https://vault.absurdum.ca
+Environment=ROCKET_PORT=8080
+
+Label="traefik.enable=true"
+Label="traefik.http.routers.vaultwarden.rule=Host(`vault.absurdum.ca`)"
+Label="traefik.http.services.vaultwarden.loadbalancer.server.port=8080"
+
+Volume=/media/raid-ssd-01/containers/vaultwarden/data:/data:Z
+
+Network=main.network
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/vaultwarden/data
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

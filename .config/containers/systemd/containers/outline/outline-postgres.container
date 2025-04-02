@@ -1,0 +1,30 @@
+[Unit]
+Description=Outline Postgres Quadlet
+
+[Container]
+Image=docker.io/postgres:16-bookworm
+AutoUpdate=registry
+ContainerName=outline-postgres
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=POSTGRES_USER=outline
+Environment=POSTGRES_DB=outline
+Secret=outline-postgres-password,type=env,target=POSTGRES_PASSWORD
+
+HealthCmd=pg_isready --dbname="$${POSTGRES_DB}" --username="$${POSTGRES_USER}" || exit 1;
+HealthStartupInterval=5s
+
+Volume=/media/raid-ssd-01/containers/outline/db:/var/lib/postgresql/data:Z
+
+Pod=outline.pod
+Notify=healthy
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/outline/db
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

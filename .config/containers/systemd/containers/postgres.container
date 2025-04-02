@@ -1,0 +1,28 @@
+[Unit]
+Description=Primary PostgreSQL Quadlet
+
+[Container]
+Image=docker.io/postgres:17
+AutoUpdate=registry
+ContainerName=postgres
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=POSTGRES_USER=postgres
+Environment=POSTGRES_DB=default
+Secret=postgres-admin-password,type=env,target=POSTGRES_PASSWORD
+
+Volume=/media/raid-ssd-01/containers/postgres:/var/lib/postgresql/data:Z
+
+Network=main.network
+PublishPort=5432:5432
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir /media/raid-ssd-01/containers/postgres
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target
+

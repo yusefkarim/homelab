@@ -1,0 +1,24 @@
+[Unit]
+Description=Immich Machine Learning Quadlet
+
+[Container]
+Image=ghcr.io/immich-app/immich-machine-learning:v1.130.3
+AutoUpdate=registry
+ContainerName=immich-machine-learning
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Volume=/media/raid-ssd-01/containers/immich/model-cache:/cache:Z
+
+AddDevice=/dev/dri
+
+Pod=immich.pod
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/immich/model-cache
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

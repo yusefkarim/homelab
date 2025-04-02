@@ -1,0 +1,37 @@
+[Unit]
+Description=Immich Server Quadlet
+Wants=immich-redis.service immich-postgres.service
+After=immich-redis.service immich-postgres.service
+
+[Container]
+Image=ghcr.io/immich-app/immich-server:v1.130.3
+AutoUpdate=registry
+ContainerName=immich-server
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=TZ=America/Toronto
+Environment=DB_HOSTNAME=immich-postgres
+Environment=DB_USERNAME=postgres
+Environment=DB_DATABASE_NAME=immich
+Environment=REDIS_HOSTNAME=immich-redis
+Secret=immich-postgres-password,type=env,target=DB_PASSWORD
+
+Label="traefik.enable=true"
+Label="traefik.http.routers.immich.rule=Host(`photos.absurdum.ca`)"
+Label="traefik.http.services.immich.loadbalancer.server.port=2283"
+
+Volume=/media/raid-ssd-01/containers/immich/upload:/usr/src/app/upload:z
+
+AddDevice=/dev/dri
+
+Pod=immich.pod
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/immich/upload
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

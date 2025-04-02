@@ -1,0 +1,43 @@
+entryPoints:
+    web:
+        address: ":80"
+        http:
+            redirections:
+                entryPoint:
+                    to: websecure
+    websecure:
+        address: ":443"
+        http:
+            tls:
+                certResolver: dnsresolver
+    # metrics:
+    #     address: ":8082"
+
+providers:
+    docker:
+        exposedByDefault: false
+    file:
+        directory: /etc/traefik/file
+        watch: true
+
+certificatesResolvers:
+    dnsresolver:
+        acme:
+            email: yusefkarim@riseup.net
+            storage: /etc/traefik/acme/acme.json
+            dnschallenge:
+                provider: porkbun
+            keyType: EC256
+
+api:
+    dashboard: true
+
+# metrics:
+#     prometheus:
+#         entryPoint: metrics
+
+log:
+    format: json
+
+accessLog:
+    format: json
