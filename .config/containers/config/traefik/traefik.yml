@@ -1,12 +1,12 @@
 entryPoints:
   web:
-    address: ":80"
+    address: ":8000"
     http:
       redirections:
         entryPoint:
           to: websecure
   websecure:
-    address: ":443"
+    address: ":8443"
     http:
       tls:
         certResolver: dnsresolver

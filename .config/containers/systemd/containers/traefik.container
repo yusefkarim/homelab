@@ -1,10 +1,11 @@
 [Unit]
 Description=Traefik Quadlet
-Requires=http.socket https.socket podman.socket
-After=http.socket https.socket podman.socket
+Requires=podman.socket
+After=podman.socket
+
 
 [Container]
-Image=docker.io/library/traefik
+Image=docker.io/library/traefik:latest
 AutoUpdate=registry
 ContainerName=traefik
 
@@ -26,18 +27,23 @@ Volume=%E/containers/config/traefik/file:/etc/traefik/file:Z
 Volume=/media/raid-ssd-01/containers/traefik/acme:/etc/traefik/acme:Z
 Volume=%t/podman/podman.sock:/var/run/docker.sock
 
+# Future improvement: use systemd socket activation instead of exposing ports here
+# I tried, but ran into an issue where I could not access Traefik from within any
+# container (including from within Traefik itself).
+# Similar issues reported in https://github.com/traefik/traefik/issues/10910.
+PublishPort=80:8000
+PublishPort=443:8443
 Network=reverse-proxy.network
 
 Notify=true
 
-# Disable label security to access Podman socket.
+# Disable label security to access sockets.
 SecurityLabelDisable=true
 
 [Service]
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/traefik/acme
 TimeoutStartSec=900
 Restart=always
-Sockets=http.socket https.socket
 
 [Install]
 WantedBy=multi-user.target default.target
