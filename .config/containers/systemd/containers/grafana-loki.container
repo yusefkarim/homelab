@@ -1,0 +1,25 @@
+[Unit]
+Description=Grafana Loki Quadlet
+
+[Container]
+Image=docker.io/grafana/loki:3
+AutoUpdate=registry
+ContainerName=grafana-loki
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Exec=--config.file=/mnt/config/loki-local-config.yaml
+
+Volume=%E/containers/config/grafana/loki/loki-local-config.yaml:/mnt/config/loki-local-config.yaml:Z
+Volume=/media/raid-ssd-01/containers/loki/data:/tmp/loki:Z
+
+Network=main.network
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/loki/data
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

@@ -1,0 +1,31 @@
+logging {
+  level  = "info"
+  format = "json"
+}
+
+discovery.docker "fcos" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "docker" {
+  targets = discovery.docker.fcos.targets
+
+  rule {
+    action = "labelmap"
+    regex  = "^__meta_docker_(.*)$"
+  }
+}
+
+loki.source.docker "podman" {
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.docker.fcos.targets
+  labels        = { "source_name" = "podman" }
+  forward_to    = [loki.write.grafana_loki.receiver]
+  relabel_rules = discovery.relabel.docker.rules
+}
+
+loki.write "grafana_loki" {
+  endpoint {
+    url = "http://grafana-loki:3100/loki/api/v1/push"
+  }
+}
