@@ -1,0 +1,38 @@
+[Unit]
+Description=WireGuard Easy Quadlet
+# Requires=wireguard.socket
+# After=wireguard.socket
+
+
+[Container]
+Image=ghcr.io/wg-easy/wg-easy:15.0.0-beta.11
+AutoUpdate=registry
+ContainerName=wg-easy
+
+Environment=INSECURE=true
+
+Label="traefik.enable=true"
+Label="traefik.http.routers.wg-easy.rule=Host(`wg.absurdum.ca`)"
+Label="traefik.http.services.wg-easy.loadbalancer.server.port=51821"
+
+Volume=/media/raid-ssd-01/containers/wg-easy/data:/etc/wireguard:Z
+Volume=/lib/modules:/lib/modules:ro
+
+Network=wireguard.network
+IP=10.42.42.42
+PublishPort=51820:51820/udp
+
+Notify=true
+
+AddCapability=NET_ADMIN SYS_MODULE NET_RAW
+Sysctl=net.ipv4.ip_forward=1 net.ipv4.conf.all.src_valid_mark=1
+Sysctl=net.ipv6.conf.all.disable_ipv6=0 net.ipv6.conf.all.forwarding=1 net.ipv6.conf.default.forwarding=1
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/wg-easy/data
+TimeoutStartSec=900
+Restart=always
+# Sockets=wireguard.socket
+
+[Install]
+WantedBy=multi-user.target default.target

@@ -1,0 +1,5 @@
+[Network]
+IPv6=true
+Subnet=10.42.42.0/24
+Subnet=fdcc:ad94:bacf:61a3::/64
+Options=mtu=1500
