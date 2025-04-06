@@ -2,6 +2,7 @@
 Description=Immich Server Quadlet
 Wants=immich-redis.service immich-postgres.service
 After=immich-redis.service immich-postgres.service
+ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
 Image=ghcr.io/immich-app/immich-server:v1.130.3

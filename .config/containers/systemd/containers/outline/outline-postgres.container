@@ -1,5 +1,6 @@
 [Unit]
 Description=Outline Postgres Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
 Image=docker.io/postgres:16-bookworm

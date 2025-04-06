@@ -1,5 +1,6 @@
 [Unit]
 Description=Immich Postgres Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
 Image=docker.io/tensorchord/pgvecto-rs:pg14-v0.3.0

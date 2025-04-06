@@ -1,5 +1,6 @@
 [Unit]
 Description=Primary PostgreSQL Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
 Image=docker.io/postgres:17

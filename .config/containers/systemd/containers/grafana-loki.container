@@ -1,5 +1,6 @@
 [Unit]
 Description=Grafana Loki Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
 Image=docker.io/grafana/loki:3

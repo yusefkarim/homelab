@@ -1,5 +1,6 @@
 [Unit]
 Description=Grafana Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
 Image=docker.io/grafana/grafana-oss:11.6.0

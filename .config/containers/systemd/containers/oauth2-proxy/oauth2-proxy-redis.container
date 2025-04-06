@@ -1,5 +1,6 @@
 [Unit]
 Description=OAuth2 Proxy Redis Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
 Image=docker.io/redis:7-alpine

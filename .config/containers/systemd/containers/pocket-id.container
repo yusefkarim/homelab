@@ -1,5 +1,6 @@
 [Unit]
 Description=Pocket ID Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
 Image=ghcr.io/pocket-id/pocket-id:v0.45.0

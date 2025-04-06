@@ -1,6 +1,7 @@
 [Unit]
 Description=Forgejo Quadlet
 After=postgres.service
+ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
 Image=codeberg.org/forgejo/forgejo:10-rootless

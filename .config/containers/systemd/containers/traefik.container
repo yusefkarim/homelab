@@ -2,7 +2,7 @@
 Description=Traefik Quadlet
 Requires=podman.socket
 After=podman.socket
-
+ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
 Image=docker.io/library/traefik:latest

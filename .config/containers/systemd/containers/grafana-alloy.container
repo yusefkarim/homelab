@@ -2,6 +2,7 @@
 Description=Grafana Alloy Quadlet
 Requires=podman.socket
 After=podman.socket
+ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
 Image=docker.io/grafana/alloy:v1.7.5
