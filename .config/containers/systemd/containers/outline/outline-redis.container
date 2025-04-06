@@ -14,7 +14,8 @@ HealthCmd=redis-cli ping || exit 1
 Volume=/media/raid-ssd-01/containers/outline/cache:/data:Z
 
 Pod=outline.pod
-Notify=healthy
+
+Notify=true
 
 [Service]
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/outline/cache

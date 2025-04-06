@@ -17,6 +17,8 @@ Volume=%t/podman/podman.sock:/var/run/docker.sock
 
 Network=main.network
 
+Notify=true
+
 # Disable label security to access Podman socket.
 SecurityLabelDisable=true
 

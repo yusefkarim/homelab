@@ -20,6 +20,8 @@ Volume=/media/raid-ssd-01/containers/vaultwarden/data:/data:Z
 
 Network=main.network
 
+Notify=true
+
 [Service]
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/vaultwarden/data
 TimeoutStartSec=900

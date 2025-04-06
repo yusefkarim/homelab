@@ -28,6 +28,8 @@ AddDevice=/dev/dri
 
 Pod=immich.pod
 
+Notify=true
+
 [Service]
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/immich/upload
 TimeoutStartSec=900

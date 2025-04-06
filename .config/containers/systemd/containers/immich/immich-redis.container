@@ -9,11 +9,11 @@ ContainerName=immich-redis
 User=%U:%G
 UserNS=keep-id:uid=%U,gid=%G
 
-HealthCmd=redis-cli ping || exit 1
-
 Volume=/media/raid-ssd-01/containers/immich/cache:/data:Z
 
 Pod=immich.pod
+
+HealthCmd=redis-cli ping || exit 1
 Notify=healthy
 
 [Service]

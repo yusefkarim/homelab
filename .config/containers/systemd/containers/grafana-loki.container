@@ -16,6 +16,8 @@ Volume=/media/raid-ssd-01/containers/loki/data:/tmp/loki:Z
 
 Network=main.network
 
+Notify=true
+
 [Service]
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/loki/data
 TimeoutStartSec=900

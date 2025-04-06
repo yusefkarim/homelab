@@ -18,6 +18,8 @@ Volume=/media/raid-ssd-01/containers/postgres:/var/lib/postgresql/data:Z
 Network=main.network
 PublishPort=5432:5432
 
+Notify=true
+
 [Service]
 ExecStartPre=-/usr/bin/mkdir /media/raid-ssd-01/containers/postgres
 TimeoutStartSec=900
@@ -25,4 +27,3 @@ Restart=always
 
 [Install]
 WantedBy=multi-user.target default.target
-

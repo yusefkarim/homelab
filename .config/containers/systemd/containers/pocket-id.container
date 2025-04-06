@@ -26,6 +26,7 @@ Label="traefik.http.services.pocket-id-backend.loadbalancer.server.port=8080"
 Volume=/media/raid-ssd-01/containers/pocket-id/data:/app/backend/data:Z
 
 Network=reverse-proxy.network
+
 Notify=true
 
 [Service]

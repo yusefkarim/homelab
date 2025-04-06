@@ -36,6 +36,8 @@ Label="traefik.http.services.oauth2-proxy.loadbalancer.server.port=4180"
 
 Pod=oauth2-proxy.pod
 
+Notify=true
+
 [Service]
 TimeoutStartSec=900
 Restart=always

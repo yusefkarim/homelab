@@ -9,11 +9,12 @@ ContainerName=oauth2-proxy-redis
 User=%U:%G
 UserNS=keep-id:uid=%U,gid=%G
 
-HealthCmd=redis-cli ping || exit 1
 
 Volume=/media/raid-ssd-01/containers/oauth2-proxy/cache:/data:Z
 
 Pod=oauth2-proxy.pod
+
+HealthCmd=redis-cli ping || exit 1
 Notify=healthy
 
 [Service]

@@ -36,6 +36,8 @@ Volume=/media/raid-ssd-01/containers/grafana/data:/var/lib/grafana:Z
 
 Network=main.network
 
+Notify=true
+
 [Service]
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/grafana/data
 TimeoutStartSec=900
