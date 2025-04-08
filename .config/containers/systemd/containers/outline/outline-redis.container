@@ -10,13 +10,13 @@ ContainerName=outline-redis
 User=%U:%G
 UserNS=keep-id:uid=%U,gid=%G
 
-HealthCmd=redis-cli ping || exit 1
 
 Volume=/media/raid-ssd-01/containers/outline/cache:/data:Z
 
 Pod=outline.pod
 
-Notify=true
+HealthCmd=redis-cli ping || exit 1
+Notify=healthy
 
 [Service]
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/outline/cache
