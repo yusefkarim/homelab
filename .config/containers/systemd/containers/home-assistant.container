@@ -1,0 +1,34 @@
+[Unit]
+Description=Home Assistant Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
+
+[Container]
+Image=ghcr.io/home-assistant/home-assistant:stable
+AutoUpdate=registry
+ContainerName=home-assistant
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=PUID=%U
+Environment=PGID=%G
+
+Label="traefik.enable=true"
+Label="traefik.http.routers.home-assistant.rule=Host(`hass.absurdum.ca`)"
+Label="traefik.http.services.home-assistant.loadbalancer.server.port=8123"
+
+Volume=/media/raid-ssd-01/containers/home-assistant/config:/config:Z
+Volume=/etc/localtime:/etc/localtime:ro
+
+Network=main.network
+
+HealthCmd=curl -f http://127.0.0.1:8123 || exit 1
+Notify=healthy
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/home-assistant/config
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target
