@@ -20,6 +20,7 @@ Environment=FORGEJO__database__USER=forgejo
 Secret=postgres-forgejo-password,type=env,target=FORGEJO__database__PASSWD
 Environment=FORGEJO__server__PROTOCOL=http
 Environment=FORGEJO__server__ROOT_URL=https://git.absurdum.ca
+Environment=FORGEJO__server__SSH_DOMAIN=git.absurdum.ca
 Environment=FORGEJO__server__HTTP_PORT=3000
 Environment=FORGEJO__server__SSH_PORT=2222
 Environment=FORGEJO__server__SSH_CREATE_AUTHORIZED_KEYS_FILE=false
