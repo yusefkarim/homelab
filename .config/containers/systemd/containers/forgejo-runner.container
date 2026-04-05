@@ -1,0 +1,32 @@
+[Unit]
+Description=Forgejo Runner Quadlet
+After=forgejo.service
+ConditionPathIsMountPoint=/media/raid-ssd-01
+
+[Container]
+Image=code.forgejo.org/forgejo/runner:11
+AutoUpdate=registry
+ContainerName=forgejo-runner
+
+Exec=forgejo-runner --config /data/config/runner.yaml daemon
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=USER_UID=%U
+Environment=USER_GID=%G
+Environment=DOCKER_HOST=unix:///var/run/docker.sock
+
+Volume=/media/raid-ssd-01/containers/forgejo-runner/data:/data:Z
+Volume=%E/containers/config/forgejo-runner/:/data/config:Z
+Volume=%t/podman/podman.sock:/var/run/docker.sock
+
+Network=main.network
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/forgejo-runner/data
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target
