@@ -1,0 +1,31 @@
+[Unit]
+Description=Stalwart Postgres Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
+
+[Container]
+Image=docker.io/postgres:16-bookworm
+AutoUpdate=registry
+ContainerName=stalwart-postgres
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=POSTGRES_USER=stalwart
+Environment=POSTGRES_DB=stalwart
+Secret=stalwart-postgres-password,type=env,target=POSTGRES_PASSWORD
+
+Volume=/media/raid-ssd-01/containers/stalwart/db:/var/lib/postgresql/data:Z
+
+Pod=stalwart.pod
+
+HealthCmd=pg_isready --dbname="$${POSTGRES_DB}" --username="$${POSTGRES_USER}" || exit 1;
+HealthStartupInterval=5s
+Notify=healthy
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/stalwart/db
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target
