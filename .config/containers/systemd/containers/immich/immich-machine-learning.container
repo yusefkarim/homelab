@@ -3,7 +3,7 @@ Description=Immich Machine Learning Quadlet
 ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
-Image=ghcr.io/immich-app/immich-machine-learning:v1.130.3
+Image=ghcr.io/immich-app/immich-machine-learning:v2.4.1
 AutoUpdate=registry
 ContainerName=immich-machine-learning
 
