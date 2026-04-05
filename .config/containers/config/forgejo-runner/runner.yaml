@@ -1,0 +1,41 @@
+# The value of level or job_level can be trace, debug, info, warn, error or fatal
+log:
+  level: info
+  job_level: info
+
+runner:
+  file: .registration
+  capacity: 6
+  # envs:
+  env_file: .env
+  timeout: 3h
+  shutdown_timeout: 3h
+  insecure: false
+  fetch_timeout: 5s
+  fetch_interval: 2s
+  report_interval: 1s
+  labels: []
+
+cache:
+  enabled: true
+  port: 0
+  dir: ""
+  external_server: ""
+  secret: ""
+  host: ""
+  proxy_port: 0
+  actions_cache_url_override: ""
+
+container:
+  network: "systemd-main"
+  enable_ipv6: false
+  privileged: false
+  options:
+  workdir_parent:
+  valid_volumes: []
+  docker_host: "-"
+  force_pull: false
+  force_rebuild: false
+
+host:
+  workdir_parent:

@@ -1,0 +1,41 @@
+[Unit]
+Description=Registry Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
+
+[Container]
+Image=docker.io/registry:3
+AutoUpdate=registry
+ContainerName=registry
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=USER_UID=%U
+Environment=USER_GID=%G
+Environment=REGISTRY_HTTP_ADDR=0.0.0.0:5000
+Environment=OTEL_TRACES_EXPORTER=none
+Environment=REGISTRY_LOG_LEVEL=info
+
+Label="traefik.enable=true"
+Label="traefik.http.routers.registry.rule=Host(`registry.absurdum.ca`)"
+Label="traefik.http.services.registry.loadbalancer.server.port=5000"
+
+Volume=/media/raid-ssd-01/containers/registry/data:/var/lib/registry:Z
+
+Network=main.network
+
+HealthCmd=[[ "$(wget --quiet --no-check-certificate --server-response -O /dev/null \
+             http://127.0.0.1:5000/ 2>&1 | awk '/^  HTTP/{print $2}' | tail -1)" == '200' ]]
+HealthInterval=15s
+HealthTimeout=1s
+HealthRetries=3
+HealthOnFailure=kill
+Notify=healthy
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/registry/data
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

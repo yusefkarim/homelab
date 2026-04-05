@@ -1,5 +1,7 @@
 [Unit]
 Description=OAuth2 Proxy Pod
+Wants=pocket-id.service
+After=pocket-id.service
 
 [Pod]
 PodName=oauth2-proxy

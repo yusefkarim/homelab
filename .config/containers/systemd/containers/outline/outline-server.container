@@ -15,11 +15,11 @@ UserNS=keep-id:uid=%U,gid=%G
 Environment=NODE_ENV=production
 Environment=PGSSLMODE=disable
 Environment=REDIS_URL=redis://outline-redis:6379
-Environment=URL=https://docs.absurdum.ca
+Environment=URL=https://docs.betweenlayers.io
 Environment=FILE_STORAGE=local
 Environment=FILE_STORAGE_LOCAL_ROOT_DIR=/var/lib/outline/data
 Environment=FILE_STORAGE_UPLOAD_MAX_SIZE=26214400
-Environment=WEB_CONCURRENCY=1
+Environment=WEB_CONCURRENCY=10
 Environment=OIDC_CLIENT_ID=4c9205cb-d962-4484-a1e1-5af07df5a99f
 Environment=OIDC_AUTH_URI=https://id.absurdum.ca/authorize
 Environment=OIDC_TOKEN_URI=https://id.absurdum.ca/api/oidc/token
@@ -27,14 +27,22 @@ Environment=OIDC_USERINFO_URI=https://id.absurdum.ca/api/oidc/userinfo
 Environment=OIDC_USERNAME_CLAIM=preferred_username
 Environment=OIDC_DISPLAY_NAME="Pocket ID"
 Environment=OIDC_SCOPES="openid profile email"
+Environment=SMTP_HOST=smtp.migadu.com
+Environment=SMTP_PORT=465
+Environment=SMTP_USERNAME=noreply@betweenlayers.io
+Environment=SMTP_FROM_EMAIL="Between Layers Docs <noreply@betweenlayers.io>"
+
 Environment=LOG_LEVEL=debug
 Secret=outline-secret-key,type=env,target=SECRET_KEY
 Secret=outline-utils-secret,type=env,target=UTILS_SECRET
 Secret=outline-database-url,type=env,target=DATABASE_URL
 Secret=outline-oidc-client-secret,type=env,target=OIDC_CLIENT_SECRET
+Secret=outline-smtp-password,type=env,target=SMTP_PASSWORD
 
 Label="traefik.enable=true"
-Label="traefik.http.routers.outline.rule=Host(`docs.absurdum.ca`)"
+Label="traefik.http.routers.outline.entrypoints=web,websecure,websecure-external"
+Label="traefik.http.routers.outline.tls=true"
+Label="traefik.http.routers.outline.rule=Host(`docs.betweenlayers.io`)"
 Label="traefik.http.services.outline.loadbalancer.server.port=3000"
 
 Volume=/media/raid-ssd-01/containers/outline/data:/var/lib/outline/data:Z

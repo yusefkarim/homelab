@@ -5,7 +5,7 @@ After=podman.socket
 ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
-Image=docker.io/library/traefik:latest
+Image=docker.io/library/traefik:v3.6.12
 AutoUpdate=registry
 ContainerName=traefik
 
@@ -33,8 +33,9 @@ Volume=%t/podman/podman.sock:/var/run/docker.sock
 # Similar issues reported in https://github.com/traefik/traefik/issues/10910.
 PublishPort=80:8000
 PublishPort=443:8443
-Network=reverse-proxy.network
+PublishPort=886:8886
 
+Network=reverse-proxy.network
 Notify=true
 
 # Disable label security to access sockets.
