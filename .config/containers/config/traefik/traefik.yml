@@ -5,8 +5,15 @@ entryPoints:
       redirections:
         entryPoint:
           to: websecure
+    asDefault: true
   websecure:
     address: ":8443"
+    http:
+      tls:
+        certResolver: dnsresolver
+    asDefault: true
+  websecure-external:
+    address: ":8886"
     http:
       tls:
         certResolver: dnsresolver
@@ -25,8 +32,11 @@ certificatesResolvers:
     acme:
       email: yusefkarim@riseup.net
       storage: /etc/traefik/acme/acme.json
+      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
       dnschallenge:
         provider: porkbun
+        # Need to use external resolver due to internal DNS server zone entry (multiple SOA problem)
+        resolvers: ["9.9.9.9"]
       keyType: EC256
 
 api:
