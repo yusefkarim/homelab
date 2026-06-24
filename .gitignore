@@ -2,8 +2,10 @@
 
 !.gitignore
 .config/*
+.config/systemd/user
 !.config/
 !.config/containers
 !.config/systemd
 !.config/etc
+
 
