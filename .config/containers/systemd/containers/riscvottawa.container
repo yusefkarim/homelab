@@ -1,0 +1,35 @@
+[Unit]
+Description=RISC-V Ottawa Quadlet
+
+[Container]
+Image=registry.absurdum.ca/riscvottawa:latest
+AutoUpdate=registry
+ContainerName=riscvottawa
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=USER_UID=%U
+Environment=USER_GID=%G
+Environment=SERVER_THREADS_MULTIPLIER=2
+
+Label="traefik.enable=true"
+Label="traefik.http.routers.riscvottawa.entrypoints=web,websecure,websecure-external"
+Label="traefik.http.routers.riscvottawa.rule=Host(`riscvottawa.ca`)"
+Label="traefik.http.services.riscvottawa.loadbalancer.server.port=3000"
+
+Network=main.network
+
+HealthCmd=curl -fsS http://localhost:3000/ >/dev/null
+HealthInterval=15s
+HealthTimeout=1s
+HealthRetries=3
+HealthOnFailure=kill
+Notify=healthy
+
+[Service]
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target
