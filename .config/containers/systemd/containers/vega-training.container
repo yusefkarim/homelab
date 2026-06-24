@@ -1,0 +1,36 @@
+[Unit]
+Description=RISC-V VEGA Training Quadlet
+
+[Container]
+Image=registry.absurdum.ca/vega-training:latest
+AutoUpdate=registry
+ContainerName=vega-training
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=USER_UID=%U
+Environment=USER_GID=%G
+Environment=SERVER_THREADS_MULTIPLIER=2
+
+Label="traefik.enable=true"
+Label="traefik.http.routers.vega-training.entrypoints=web,websecure,websecure-external"
+Label="traefik.http.routers.vega-training.rule=Host(`vega.riscvottawa.ca`)"
+Label="traefik.http.services.vega-training.loadbalancer.server.port=8000"
+
+Network=main.network
+
+HealthCmd=[[ "$(wget --quiet --no-check-certificate --server-response -O /dev/null \
+             http://127.0.0.1:8000/health 2>&1 | awk '/^  HTTP/{print $2}' | tail -1)" == '200' ]]
+HealthInterval=15s
+HealthTimeout=1s
+HealthRetries=3
+HealthOnFailure=kill
+Notify=healthy
+
+[Service]
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target
