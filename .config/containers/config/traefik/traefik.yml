@@ -4,7 +4,8 @@ entryPoints:
     http:
       redirections:
         entryPoint:
-          to: websecure
+          to: ":443"
+          scheme: https
     asDefault: true
   websecure:
     address: ":8443"
@@ -12,6 +13,13 @@ entryPoints:
       tls:
         certResolver: dnsresolver
     asDefault: true
+  web-external:
+    address: ":8880"
+    http:
+      redirections:
+        entryPoint:
+          to: ":443"
+          scheme: https
   websecure-external:
     address: ":8886"
     http:

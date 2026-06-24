@@ -33,6 +33,7 @@ Volume=%t/podman/podman.sock:/var/run/docker.sock
 # Similar issues reported in https://github.com/traefik/traefik/issues/10910.
 PublishPort=80:8000
 PublishPort=443:8443
+PublishPort=880:8880
 PublishPort=886:8886
 
 Network=reverse-proxy.network

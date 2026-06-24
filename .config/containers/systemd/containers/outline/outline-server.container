@@ -40,7 +40,7 @@ Secret=outline-oidc-client-secret,type=env,target=OIDC_CLIENT_SECRET
 Secret=outline-smtp-password,type=env,target=SMTP_PASSWORD
 
 Label="traefik.enable=true"
-Label="traefik.http.routers.outline.entrypoints=web,websecure,websecure-external"
+Label="traefik.http.routers.outline.entrypoints=web,websecure"
 Label="traefik.http.routers.outline.tls=true"
 Label="traefik.http.routers.outline.rule=Host(`docs.betweenlayers.io`)"
 Label="traefik.http.services.outline.loadbalancer.server.port=3000"
