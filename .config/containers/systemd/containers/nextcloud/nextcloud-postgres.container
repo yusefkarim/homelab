@@ -1,0 +1,38 @@
+[Unit]
+Description=Nextcloud Postgres Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
+
+[Container]
+Image=docker.io/postgres:18
+AutoUpdate=registry
+ContainerName=nextcloud-postgres
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+Environment=POSTGRES_USER=nextcloud
+Environment=POSTGRES_DB=nextcloud
+Environment=POSTGRES_INITDB_ARGS=--data-checksums
+Secret=nextcloud-postgres-password,type=env,target=POSTGRES_PASSWORD
+
+# postgres:18 moved PGDATA to /var/lib/postgresql/<major>/docker and declares
+# /var/lib/postgresql as the volume, so this mounts one level up from the
+# /var/lib/postgresql/data the older postgres units in this tree use.
+# Data lands on the host under db/18/docker.
+Volume=/media/raid-ssd-01/containers/nextcloud/db:/var/lib/postgresql:Z
+
+Pod=nextcloud.pod
+
+ShmSize=256m
+
+HealthCmd=pg_isready --dbname="$${POSTGRES_DB}" --username="$${POSTGRES_USER}" || exit 1;
+HealthStartupInterval=5s
+Notify=healthy
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/nextcloud/db
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

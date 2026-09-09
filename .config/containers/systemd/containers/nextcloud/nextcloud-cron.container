@@ -1,0 +1,36 @@
+[Unit]
+Description=Nextcloud Cron Quadlet
+Wants=nextcloud-app.service nextcloud-postgres.service nextcloud-redis.service
+After=nextcloud-app.service nextcloud-postgres.service nextcloud-redis.service
+ConditionPathIsMountPoint=/media/raid-ssd-01
+
+[Container]
+Image=docker.io/library/nextcloud:34-fpm
+AutoUpdate=registry
+ContainerName=nextcloud-cron
+
+User=33:33
+UserNS=keep-id:uid=33,gid=33
+
+# busybox crond in /cron.sh calls setgroups() to drop to www-data before
+# running jobs, which the rootless user namespace denies ("can't set groups:
+# Operation not permitted"). The container already runs as www-data, so a
+# plain loop skips the user switch. trap + `sleep & wait` makes SIGTERM from
+# systemd stop the container immediately instead of waiting for the sleep.
+Entrypoint=/bin/sh
+Exec=-c "trap 'exit 0' TERM; while true; do php -f /var/www/html/cron.php; sleep 300 & wait; done"
+
+Volume=/media/raid-ssd-01/containers/nextcloud/html:/var/www/html:z
+Volume=/media/raid-ssd-01/containers/nextcloud/data:/var/www/data:z
+Volume=%E/containers/config/nextcloud/php-nextcloud.ini:/usr/local/etc/php/conf.d/zz-nextcloud.ini:z,ro
+
+Pod=nextcloud.pod
+
+# No Notify=: the shell loop does not sd_notify.
+
+[Service]
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

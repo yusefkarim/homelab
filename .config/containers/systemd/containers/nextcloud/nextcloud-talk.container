@@ -1,0 +1,42 @@
+[Unit]
+Description=Nextcloud Talk Quadlet
+Wants=nextcloud-nginx.service
+After=nextcloud-nginx.service
+
+[Container]
+Image=ghcr.io/nextcloud-releases/aio-talk:latest
+AutoUpdate=registry
+ContainerName=nextcloud-talk
+
+# No user remapping: the image runs supervisord over coturn, janus, nats and
+# the signaling server, each under its own in-image account.
+
+Environment=NC_DOMAIN=cloud.ohmstead.ca
+Environment=TALK_HOST=talk.ohmstead.ca
+Environment=TALK_PORT=3478
+Secret=nextcloud-talk-turn-secret,type=env,target=TURN_SECRET
+Secret=nextcloud-talk-signaling-secret,type=env,target=SIGNALING_SECRET
+Secret=nextcloud-talk-internal-secret,type=env,target=INTERNAL_SECRET
+
+Label="traefik.enable=true"
+Label="traefik.http.routers.nextcloud-talk.entrypoints=web,websecure,websecure-external"
+Label="traefik.http.routers.nextcloud-talk.rule=Host(`talk.ohmstead.ca`)"
+Label="traefik.http.services.nextcloud-talk.loadbalancer.server.port=8081"
+
+Network=main.network
+
+# Media is relayed through the bundled TURN server, so 3478 is the only port
+# that needs forwarding at the router. No wide Janus UDP range is required.
+PublishPort=3478:3478/tcp
+PublishPort=3478:3478/udp
+
+# No Notify=: the image runs supervisord, which does not sd_notify. Add a
+# healthcheck against the signaling server once stage 4 confirms which
+# HTTP client the image ships (see NEXTCLOUD.md section 5).
+
+[Service]
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

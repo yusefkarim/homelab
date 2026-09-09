@@ -1,0 +1,58 @@
+[Unit]
+Description=Nextcloud Nginx Quadlet
+Wants=nextcloud-app.service
+After=nextcloud-app.service
+ConditionPathIsMountPoint=/media/raid-ssd-01
+
+[Container]
+Image=docker.io/nginxinc/nginx-unprivileged:1.29-alpine
+AutoUpdate=registry
+ContainerName=nextcloud-nginx
+
+# The unprivileged nginx image runs as uid 101 with writable temp paths, so
+# host uid 1000 is mapped to 101. The html tree then reads cleanly here while
+# the app container sees the same files as www-data.
+User=101:101
+UserNS=keep-id:uid=101,gid=101
+
+Label="traefik.enable=true"
+Label="traefik.http.routers.nextcloud.entrypoints=web,websecure,websecure-external"
+Label="traefik.http.routers.nextcloud.tls=true"
+Label="traefik.http.routers.nextcloud.rule=Host(`cloud.ohmstead.ca`)"
+Label="traefik.http.services.nextcloud.loadbalancer.server.port=8080"
+
+Volume=/media/raid-ssd-01/containers/nextcloud/html:/var/www/html:z,ro
+Volume=%E/containers/config/nextcloud/nginx.conf:/etc/nginx/nginx.conf:z,ro
+
+Pod=nextcloud.pod
+
+HealthCmd=[[ "$(wget --quiet --no-check-certificate --server-response -O /dev/null \
+             http://127.0.0.1:8080/status.php 2>&1 | awk '/^  HTTP/{print $2}' | tail -1)" == '200' ]]
+HealthInterval=15s
+HealthTimeout=1s
+HealthRetries=3
+HealthOnFailure=kill
+
+# First run copies the whole Nextcloud tree into the bind mount and installs
+# the database before status.php answers 200. That takes minutes, far longer
+# than the steady-state probe tolerates, and HealthOnFailure=kill would
+# otherwise tear nginx down mid-install. Podman does not mark a container
+# unhealthy while a startup probe is still running.
+# status.php keeps answering 200 in maintenance mode, so the steady-state
+# probe does not kill nginx during a Nextcloud upgrade either.
+HealthStartupCmd=[[ "$(wget --quiet --no-check-certificate --server-response -O /dev/null \
+                    http://127.0.0.1:8080/status.php 2>&1 | awk '/^  HTTP/{print $2}' | tail -1)" == '200' ]]
+HealthStartupInterval=10s
+HealthStartupTimeout=5s
+HealthStartupRetries=60
+HealthStartupSuccess=1
+
+Notify=healthy
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/nextcloud/html
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

@@ -1,0 +1,30 @@
+[Unit]
+Description=Nextcloud Redis Quadlet
+ConditionPathIsMountPoint=/media/raid-ssd-01
+
+[Container]
+Image=docker.io/redis:7-alpine
+AutoUpdate=registry
+ContainerName=nextcloud-redis
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+# No maxmemory is set on purpose: this instance backs Nextcloud transactional
+# file locking and an eviction would silently drop locks. The default
+# noeviction policy is the correct one here.
+
+Volume=/media/raid-ssd-01/containers/nextcloud/cache:/data:Z
+
+Pod=nextcloud.pod
+
+HealthCmd=redis-cli ping || exit 1
+Notify=healthy
+
+[Service]
+ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/nextcloud/cache
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target
