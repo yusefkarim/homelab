@@ -1,0 +1,36 @@
+[Unit]
+Description=Nextcloud Notify Push Quadlet
+Wants=nextcloud-app.service nextcloud-redis.service
+After=nextcloud-app.service nextcloud-redis.service
+ConditionPathIsMountPoint=/media/raid-ssd-01
+
+[Container]
+Image=docker.io/library/nextcloud:34-fpm
+AutoUpdate=registry
+ContainerName=nextcloud-notify-push
+
+User=33:33
+UserNS=keep-id:uid=33,gid=33
+
+# The push daemon ships inside the notify_push app. It reads database and
+# Redis credentials straight out of config.php, so it needs no secrets.
+# It restart-loops until "occ app:install notify_push" has been run once.
+Entrypoint=/var/www/html/custom_apps/notify_push/bin/x86_64/notify_push
+Exec=/var/www/html/config/config.php
+
+Environment=PORT=7867
+Environment=NEXTCLOUD_URL=http://localhost:8080
+Environment=LOG=warn
+
+Volume=/media/raid-ssd-01/containers/nextcloud/html:/var/www/html:z
+
+Pod=nextcloud.pod
+
+# No Notify=: nothing waits on this unit's readiness.
+
+[Service]
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

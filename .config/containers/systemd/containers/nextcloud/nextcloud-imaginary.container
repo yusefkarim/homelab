@@ -1,0 +1,34 @@
+[Unit]
+Description=Nextcloud Imaginary Quadlet
+
+[Container]
+Image=docker.io/nextcloud/aio-imaginary:latest
+AutoUpdate=registry
+ContainerName=nextcloud-imaginary
+
+User=%U:%G
+UserNS=keep-id:uid=%U,gid=%G
+
+# The image binds the port named by PORT and ignores imaginary's own -p flag,
+# and its default of 9000 collides with php-fpm in the shared pod network
+# namespace. The image healthcheck reads the same variable.
+Environment=PORT=9001
+
+# /start.sh already supplies -return-size and -max-allowed-resolution and
+# appends whatever is given here.
+Exec=-concurrency 50 -enable-url-source
+
+Pod=nextcloud.pod
+
+# Imaginary is reachable only over pod loopback, never published and on no
+# network of its own, so -enable-url-source is not exposed beyond this pod.
+
+# Uses the healthcheck baked into the image (nc -z 127.0.0.1 $PORT).
+Notify=healthy
+
+[Service]
+TimeoutStartSec=900
+Restart=always
+
+[Install]
+WantedBy=multi-user.target default.target

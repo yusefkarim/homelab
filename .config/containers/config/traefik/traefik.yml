@@ -13,6 +13,13 @@ entryPoints:
       tls:
         certResolver: dnsresolver
     asDefault: true
+    # Large Nextcloud uploads and long-lived Collabora sessions outlive the
+    # 60s default readTimeout, which covers the whole request body.
+    transport:
+      respondingTimeouts:
+        readTimeout: 0
+        writeTimeout: 0
+        idleTimeout: 180s
   web-external:
     address: ":8880"
     http:
@@ -25,6 +32,13 @@ entryPoints:
     http:
       tls:
         certResolver: dnsresolver
+    # Large Nextcloud uploads and long-lived Collabora sessions outlive the
+    # 60s default readTimeout, which covers the whole request body.
+    transport:
+      respondingTimeouts:
+        readTimeout: 0
+        writeTimeout: 0
+        idleTimeout: 180s
   # metrics:
   #     address: ":8082"
 

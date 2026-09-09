@@ -1,0 +1,6 @@
+[Unit]
+Description=Nextcloud Pod
+
+[Pod]
+PodName=nextcloud
+Network=nextcloud.network
