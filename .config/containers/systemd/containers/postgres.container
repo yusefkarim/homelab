@@ -25,6 +25,7 @@ Notify=true
 ExecStartPre=-/usr/bin/mkdir /media/raid-ssd-01/containers/postgres
 TimeoutStartSec=900
 Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target default.target

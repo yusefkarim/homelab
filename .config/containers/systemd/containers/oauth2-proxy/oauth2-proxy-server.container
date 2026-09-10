@@ -1,11 +1,12 @@
 [Unit]
 Description=OAuth2 Proxy Server Quadlet
-# OAuth2 Proxy requests OIDC configuration after launch, Pocket-ID should be ready
-Wants=oauth2-proxy-redis.service pocket-id.service
-After=oauth2-proxy-redis.service pocket-id.service
+# OIDC discovery runs at startup against https://id.absurdum.ca, which resolves
+# back through Traefik, so both it and Pocket-ID must be serving first.
+Wants=oauth2-proxy-redis.service pocket-id.service traefik.service
+After=oauth2-proxy-redis.service pocket-id.service traefik.service
 
 [Container]
-Image=quay.io/oauth2-proxy/oauth2-proxy:latest
+Image=quay.io/oauth2-proxy/oauth2-proxy:v7.15.4
 AutoUpdate=registry
 ContainerName=oauth2-proxy-server
 
@@ -41,6 +42,7 @@ Notify=true
 [Service]
 TimeoutStartSec=900
 Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target default.target

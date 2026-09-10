@@ -23,6 +23,7 @@ Notify=true
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/loki/data
 TimeoutStartSec=900
 Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target default.target
