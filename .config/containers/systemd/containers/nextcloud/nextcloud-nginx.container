@@ -18,6 +18,7 @@ UserNS=keep-id:uid=101,gid=101
 Label="traefik.enable=true"
 Label="traefik.http.routers.nextcloud.entrypoints=web,websecure,websecure-external"
 Label="traefik.http.routers.nextcloud.tls=true"
+Label="traefik.http.routers.nextcloud.tls.certresolver=dnsresolver"
 Label="traefik.http.routers.nextcloud.rule=Host(`cloud.ohmstead.ca`)"
 Label="traefik.http.services.nextcloud.loadbalancer.server.port=8080"
 
@@ -53,6 +54,7 @@ Notify=healthy
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/nextcloud/html
 TimeoutStartSec=900
 Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target default.target

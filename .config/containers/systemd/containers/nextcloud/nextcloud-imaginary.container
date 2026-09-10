@@ -2,7 +2,7 @@
 Description=Nextcloud Imaginary Quadlet
 
 [Container]
-Image=docker.io/nextcloud/aio-imaginary:latest
+Image=docker.io/nextcloud/aio-imaginary:20260825_084538
 AutoUpdate=registry
 ContainerName=nextcloud-imaginary
 
@@ -29,6 +29,7 @@ Notify=healthy
 [Service]
 TimeoutStartSec=900
 Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target default.target

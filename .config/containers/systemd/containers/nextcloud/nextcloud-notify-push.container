@@ -1,7 +1,11 @@
 [Unit]
 Description=Nextcloud Notify Push Quadlet
-Wants=nextcloud-app.service nextcloud-redis.service
-After=nextcloud-app.service nextcloud-redis.service
+# nextcloud-app has no readiness signal, so ordering on it only means "podman run
+# returned", which is long before the hooks have installed this app. The nginx
+# healthcheck answers status.php through php-fpm, so healthy there means the
+# entrypoint finished.
+Wants=nextcloud-nginx.service nextcloud-redis.service
+After=nextcloud-nginx.service nextcloud-redis.service
 ConditionPathIsMountPoint=/media/raid-ssd-01
 
 [Container]
@@ -14,8 +18,7 @@ UserNS=keep-id:uid=33,gid=33
 
 # The push daemon ships inside the notify_push app. It reads database and
 # Redis credentials straight out of config.php, so it needs no secrets.
-# It restart-loops until "occ app:install notify_push" has been run once.
-Entrypoint=/var/www/html/custom_apps/notify_push/bin/x86_64/notify_push
+Entrypoint=/var/www/html/apps/notify_push/bin/x86_64/notify_push
 Exec=/var/www/html/config/config.php
 
 Environment=PORT=7867
@@ -31,6 +34,9 @@ Pod=nextcloud.pod
 [Service]
 TimeoutStartSec=900
 Restart=always
+# Spaced retries keep the default start limit from giving up permanently while
+# the app store install is still being retried by the converge hook.
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target default.target
