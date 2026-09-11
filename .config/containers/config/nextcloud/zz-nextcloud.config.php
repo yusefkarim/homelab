@@ -25,6 +25,9 @@ $CONFIG = array (
   // Traefik, plus pod loopback for the notify_push self-test. Verify the
   // subnet with: podman network inspect systemd-nextcloud
   'trusted_proxies'      => ['127.0.0.1', '10.89.0.0/16'],
+  // Overlaid index by index onto whatever the installer wrote into config.php,
+  // so keep this list at least as long as that one.
+  'trusted_domains'      => ['localhost', 'cloud.ohmstead.ca'],
 
   'default_phone_region' => 'CA',
 

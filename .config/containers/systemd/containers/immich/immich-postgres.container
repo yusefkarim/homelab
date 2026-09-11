@@ -25,6 +25,7 @@ ShmSize=128m
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/immich/db
 TimeoutStartSec=900
 Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target default.target

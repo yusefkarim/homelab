@@ -4,7 +4,7 @@ Wants=nextcloud-nginx.service
 After=nextcloud-nginx.service
 
 [Container]
-Image=ghcr.io/nextcloud-releases/aio-talk:latest
+Image=ghcr.io/nextcloud-releases/aio-talk:20260825_084538
 AutoUpdate=registry
 ContainerName=nextcloud-talk
 
@@ -20,6 +20,8 @@ Secret=nextcloud-talk-internal-secret,type=env,target=INTERNAL_SECRET
 
 Label="traefik.enable=true"
 Label="traefik.http.routers.nextcloud-talk.entrypoints=web,websecure,websecure-external"
+Label="traefik.http.routers.nextcloud-talk.tls=true"
+Label="traefik.http.routers.nextcloud-talk.tls.certresolver=dnsresolver"
 Label="traefik.http.routers.nextcloud-talk.rule=Host(`talk.ohmstead.ca`)"
 Label="traefik.http.services.nextcloud-talk.loadbalancer.server.port=8081"
 
@@ -30,13 +32,14 @@ Network=main.network
 PublishPort=3478:3478/tcp
 PublishPort=3478:3478/udp
 
-# No Notify=: the image runs supervisord, which does not sd_notify. Add a
-# healthcheck against the signaling server once stage 4 confirms which
-# HTTP client the image ships (see NEXTCLOUD.md section 5).
+HealthCmd=/healthcheck.sh
+HealthStartupInterval=5s
+Notify=healthy
 
 [Service]
 TimeoutStartSec=900
 Restart=always
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target default.target
