@@ -17,7 +17,11 @@ Volume=/media/raid-ssd-01/containers/loki/data:/tmp/loki:Z
 
 Network=main.network
 
-Notify=true
+# Loki never sends sd_notify READY=1. /ready can take several minutes after a
+# restart with a backlog, which TimeoutStartSec covers.
+HealthCmd=wget -q --spider http://localhost:3100/ready
+HealthStartupInterval=10s
+Notify=healthy
 
 [Service]
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/loki/data

@@ -37,7 +37,8 @@ Label="traefik.http.services.oauth2-proxy.loadbalancer.server.port=4180"
 
 Pod=oauth2-proxy.pod
 
-Notify=true
+# No Notify=: oauth2-proxy never sends sd_notify READY=1, and the distroless
+# image has no shell or HTTP client to run a healthcheck with.
 
 [Service]
 TimeoutStartSec=900
