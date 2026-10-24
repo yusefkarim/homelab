@@ -21,7 +21,9 @@ Volume=/media/raid-ssd-01/containers/vaultwarden/data:/data:Z
 
 Network=main.network
 
-Notify=true
+HealthCmd=/healthcheck.sh
+HealthStartupInterval=5s
+Notify=healthy
 
 [Service]
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/vaultwarden/data

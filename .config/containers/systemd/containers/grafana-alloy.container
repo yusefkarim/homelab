@@ -18,7 +18,8 @@ Volume=%t/podman/podman.sock:/var/run/docker.sock
 
 Network=main.network
 
-Notify=true
+# No Notify=: Alloy never sends sd_notify READY=1, and the image has no HTTP
+# client to probe /-/ready with.
 
 # Disable label security to access Podman socket.
 SecurityLabelDisable=true

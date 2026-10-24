@@ -29,7 +29,9 @@ AddDevice=/dev/dri
 
 Pod=immich.pod
 
-Notify=true
+HealthCmd=immich-healthcheck
+HealthStartupInterval=5s
+Notify=healthy
 
 [Service]
 ExecStartPre=-/usr/bin/mkdir -p /media/raid-ssd-01/containers/immich/upload
